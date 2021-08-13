@@ -124,10 +124,10 @@ class ThreeToolboxAlgorithm(QgsProcessingAlgorithm):
 
             mesh = Mesh(feature.geometry())
 
-            if mesh.polydata() is None:
+            if mesh.isEmpty():
                 volume = 0
             else:
-                volume = mesh.polydata().volume
+                volume = mesh.volume()
 
             new_feature = QgsFeature()
             new_feature.setFields(fields)

@@ -32,3 +32,15 @@ class Mesh:
     def polydata(self):
         """Returns the polydata object"""
         return self.__polydata
+    
+    def volume(self):
+        """Returns the volume of the given geometry"""
+        return self.__polydata.volume
+    
+    def isEmpty(self):
+        """Returns True if the geometry is empty"""
+        return self.__polydata is None
+    
+    def isClosed(self):
+        """Returns True if this mesh is a closed volume"""
+        return self.__polydata.n_open_edges == 0
