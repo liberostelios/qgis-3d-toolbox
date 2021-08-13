@@ -27,7 +27,7 @@ class Mesh:
 
         mesh = pv.PolyData(points, faces)
 
-        return mesh
+        return mesh.clean()
 
     def polydata(self):
         """Returns the polydata object"""

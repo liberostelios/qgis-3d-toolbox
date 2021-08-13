@@ -83,6 +83,43 @@ def volume(geometry, feature, parent):
 
     return mesh.volume()
 
+@qgsfunction('auto', "3D Geometry", register=False)
+def is_solid(geometry, feature, parent):
+    """
+        Returns true if a given multipolygon object is a closed volume.
+
+        <h4>Syntax</h4>
+        <div class="syntax">
+            <code>
+                <span class="functionname">is_solid</span>
+                (<span class="argument">geometry</span>)
+            </code>
+        </div>
+
+        <h4>Arguments</h4>
+        <div class="arguments">
+            <table>
+                <tr><td class="argument">geometry</td><td>multipolygon geometry object</td></tr>
+            </table>
+        </div>
+
+        <h4>Examples</h4>
+        <div class="examples">
+        <ul>
+            <li>
+                <code>is_solid($geometry)</code> &rarr; <code>true (if, the current geometry is closed)</code>
+            </li>
+        </ul>
+        </div>
+    """
+
+    mesh = Mesh(geometry)
+
+    if mesh.isEmpty():
+        return False
+
+    return mesh.isSolid()
+
 class ThreeToolboxPlugin(object):
 
     def __init__(self):
@@ -96,7 +133,9 @@ class ThreeToolboxPlugin(object):
     def initGui(self):
         self.initProcessing()
         QgsExpression.registerFunction(volume)
+        QgsExpression.registerFunction(is_solid)
 
     def unload(self):
         QgsApplication.processingRegistry().removeProvider(self.provider)
         QgsExpression.unregisterFunction('volume')
+        QgsExpression.unregisterFunction('is_solid')
