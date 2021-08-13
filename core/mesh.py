@@ -41,6 +41,6 @@ class Mesh:
         """Returns True if the geometry is empty"""
         return self.__polydata is None
     
-    def isClosed(self):
-        """Returns True if this mesh is a closed volume"""
+    def isSolid(self):
+        """Returns True if this mesh is a solid (i.e. a closed volume)"""
         return self.__polydata.n_open_edges == 0
