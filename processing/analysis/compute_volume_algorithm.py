@@ -95,8 +95,11 @@ class ComputeVolumeAlgorithm(QgsProcessingAlgorithm):
         Here is where the processing itself takes place.
         """
 
-        import ptvsd
-        ptvsd.debug_this_thread()
+        try:
+            import ptvsd
+            ptvsd.debug_this_thread()
+        except:
+            pass
 
         # Retrieve the feature source and sink. The 'dest_id' variable is used
         # to uniquely identify the feature sink, and must be included in the
