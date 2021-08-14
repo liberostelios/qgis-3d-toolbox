@@ -39,8 +39,8 @@ LOCALES =
 SOURCES = \
 	__init__.py \
 	three_toolbox.py \
-	three_toolbox_provider.py \
-	three_toolbox_algorithm.py \
+	processing/three_toolbox_provider.py \
+	processing/**/*.py \
 	core/__init__.py \
 	core/mesh.py
 
@@ -49,8 +49,8 @@ PLUGINNAME = three_toolbox
 PY_FILES = \
 	__init__.py \
 	three_toolbox.py \
-	three_toolbox_provider.py \
-	three_toolbox_algorithm.py \
+	processing/three_toolbox_provider.py \
+	processing/**/*.py \
 	core/__init__.py \
 	core/mesh.py
 

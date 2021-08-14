@@ -36,7 +36,7 @@ import inspect
 
 from qgis.utils import qgsfunction
 from qgis.core import QgsExpression, QgsApplication
-from .three_toolbox_provider import ThreeToolboxProvider
+from .processing.three_toolbox_provider import ThreeToolboxProvider
 from .core.mesh import Mesh
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]

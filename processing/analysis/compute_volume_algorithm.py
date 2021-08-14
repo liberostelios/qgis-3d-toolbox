@@ -40,10 +40,10 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingAlgorithm,
                        QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterFeatureSink)
-from .core.mesh import Mesh
+from ...core.mesh import Mesh
 
 
-class ThreeToolboxAlgorithm(QgsProcessingAlgorithm):
+class ComputeVolumeAlgorithm(QgsProcessingAlgorithm):
     """
     This is an example algorithm that takes a vector layer and
     creates a new identical one.
@@ -190,4 +190,4 @@ class ThreeToolboxAlgorithm(QgsProcessingAlgorithm):
         return QCoreApplication.translate('Processing', string)
 
     def createInstance(self):
-        return ThreeToolboxAlgorithm()
+        return ComputeVolumeAlgorithm()

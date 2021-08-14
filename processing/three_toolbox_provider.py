@@ -31,7 +31,7 @@ __copyright__ = '(C) 2021 by 3D geoinformation group'
 __revision__ = '$Format:%H$'
 
 from qgis.core import QgsProcessingProvider
-from .three_toolbox_algorithm import ThreeToolboxAlgorithm
+from .analysis.compute_volume_algorithm import ComputeVolumeAlgorithm
 
 
 class ThreeToolboxProvider(QgsProcessingProvider):
@@ -53,7 +53,7 @@ class ThreeToolboxProvider(QgsProcessingProvider):
         """
         Loads all algorithms belonging to this provider.
         """
-        self.addAlgorithm(ThreeToolboxAlgorithm())
+        self.addAlgorithm(ComputeVolumeAlgorithm())
         # add additional algorithms here
         # self.addAlgorithm(MyOtherAlgorithm())
 
