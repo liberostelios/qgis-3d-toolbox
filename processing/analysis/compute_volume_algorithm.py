@@ -189,6 +189,11 @@ class ComputeVolumeAlgorithm(QgsProcessingAlgorithm):
         """
         return 'Analysis'
 
+    def shortHelpString(self):
+        """Returns help string for the algorithm's UI"""
+        return """This algorithm computes the volume of multipolygon objects.
+        """
+
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
 
