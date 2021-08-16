@@ -9,7 +9,7 @@ class Mesh:
     def __init__(self, geometry: QgsGeometry) -> None:
         self.__polydata = self.geom_to_polydata(geometry)
 
-    def geom_to_polydata(self, geometry: QgsGeometry):
+    def geom_to_polydata(self, geometry: QgsGeometry) -> pv.PolyData:
         """Converts a QgsGeometry to PolyData"""
         points = []
         faces = []
@@ -29,18 +29,18 @@ class Mesh:
 
         return mesh.clean()
 
-    def polydata(self):
+    def polydata(self) -> pv.PolyData:
         """Returns the polydata object"""
         return self.__polydata
 
-    def volume(self):
+    def volume(self) -> float:
         """Returns the volume of the given geometry"""
         return self.__polydata.volume
 
-    def isEmpty(self):
+    def isEmpty(self) -> bool:
         """Returns True if the geometry is empty"""
         return self.__polydata is None
 
-    def isSolid(self):
+    def isSolid(self) -> bool:
         """Returns True if this mesh is a solid (i.e. a closed volume)"""
         return self.__polydata.n_open_edges == 0
