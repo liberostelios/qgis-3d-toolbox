@@ -31,15 +31,16 @@ __copyright__ = '(C) 2021 by 3D geoinformation group'
 __revision__ = '$Format:%H$'
 
 from qgis.core import QgsProcessingProvider
-from .analysis.compute_volume_algorithm import ComputeVolumeAlgorithm
+from .system.install_pyvista_algorithm import InstallPyvistaAlgorithm
 
 
 class ThreeToolboxProvider(QgsProcessingProvider):
 
-    def __init__(self):
+    def __init__(self, with_pyvista=True):
         """
         Default constructor.
         """
+        self.__with_pyvista = with_pyvista
         QgsProcessingProvider.__init__(self)
 
     def unload(self):
@@ -53,7 +54,12 @@ class ThreeToolboxProvider(QgsProcessingProvider):
         """
         Loads all algorithms belonging to this provider.
         """
-        self.addAlgorithm(ComputeVolumeAlgorithm())
+        if self.__with_pyvista:
+            from .analysis.compute_volume_algorithm import ComputeVolumeAlgorithm
+
+            self.addAlgorithm(ComputeVolumeAlgorithm())
+        else:
+            self.addAlgorithm(InstallPyvistaAlgorithm())
         # add additional algorithms here
         # self.addAlgorithm(MyOtherAlgorithm())
 

@@ -37,7 +37,14 @@ import inspect
 from qgis.utils import qgsfunction
 from qgis.core import QgsExpression, QgsApplication
 from .processing.three_toolbox_provider import ThreeToolboxProvider
-from .core.mesh import Mesh
+
+try:
+    import pyvista
+    from .core.mesh import Mesh
+
+    has_pyvista = True
+except ImportError:
+    has_pyvista = False
 
 cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
 
@@ -127,13 +134,15 @@ class ThreeToolboxPlugin(object):
 
     def initProcessing(self):
         """Init Processing provider for QGIS >= 3.8."""
-        self.provider = ThreeToolboxProvider()
+        self.provider = ThreeToolboxProvider(has_pyvista)
         QgsApplication.processingRegistry().addProvider(self.provider)
 
     def initGui(self):
         self.initProcessing()
-        QgsExpression.registerFunction(volume)
-        QgsExpression.registerFunction(is_solid)
+
+        if has_pyvista:
+            QgsExpression.registerFunction(volume)
+            QgsExpression.registerFunction(is_solid)
 
     def unload(self):
         QgsApplication.processingRegistry().removeProvider(self.provider)
