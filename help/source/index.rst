@@ -14,6 +14,8 @@ Contents:
    quickstart
    functions
 
+   api
+
 Indices and tables
 ==================
 

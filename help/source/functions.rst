@@ -1,4 +1,4 @@
 Functions
 =========
 
-A list of functions.
+.. autofunction:: three_toolbox.three_toolbox.volume
