@@ -38,6 +38,7 @@ LOCALES =
 # translation
 SOURCES = \
 	__init__.py \
+	functions.py \
 	three_toolbox.py \
 	processing/three_toolbox_provider.py \
 	processing/**/*.py \
@@ -48,6 +49,7 @@ PLUGINNAME = three_toolbox
 
 PY_FILES = \
 	__init__.py \
+	functions.py \
 	three_toolbox.py \
 	processing/three_toolbox_provider.py \
 	processing/**/*.py \

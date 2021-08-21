@@ -34,13 +34,12 @@ import os
 import sys
 import inspect
 
-from qgis.utils import qgsfunction
 from qgis.core import QgsExpression, QgsApplication
 from .processing.three_toolbox_provider import ThreeToolboxProvider
 
 try:
     import pyvista
-    from .core.mesh import Mesh
+    from .functions import *
 
     has_pyvista = True
 except ImportError:
@@ -50,82 +49,6 @@ cmd_folder = os.path.split(inspect.getfile(inspect.currentframe()))[0]
 
 if cmd_folder not in sys.path:
     sys.path.insert(0, cmd_folder)
-
-@qgsfunction('auto', "3D Geometry", register=False)
-def volume(geometry, feature, parent):
-    """
-        Returns the volume of a geometry multipolygon object. If the geometry is
-        not a closed volume, this can be an arbitrary value.
-
-        <h4>Syntax</h4>
-        <div class="syntax">
-            <code>
-                <span class="functionname">volume</span>
-                (<span class="argument">geometry</span>)
-            </code>
-            <br/><br/>[ ] marks optional components
-        </div>
-
-        <h4>Arguments</h4>
-        <div class="arguments">
-            <table>
-                <tr><td class="argument">geometry</td><td>multipolygon geometry object</td></tr>
-            </table>
-        </div>
-
-        <h4>Examples</h4>
-        <div class="examples">
-        <ul>
-            <li>
-                <code>volume($geometry)</code> &rarr; <code>The volume of the current geometry</code>
-            </li>
-        </ul>
-        </div>
-    """
-
-    mesh = Mesh(geometry)
-
-    if mesh.isEmpty():
-        return 0
-
-    return mesh.volume()
-
-@qgsfunction('auto', "3D Geometry", register=False)
-def is_solid(geometry, feature, parent):
-    """
-        Returns true if a given multipolygon object is a closed volume.
-
-        <h4>Syntax</h4>
-        <div class="syntax">
-            <code>
-                <span class="functionname">is_solid</span>
-                (<span class="argument">geometry</span>)
-            </code>
-        </div>
-
-        <h4>Arguments</h4>
-        <div class="arguments">
-            <table>
-                <tr><td class="argument">geometry</td><td>multipolygon geometry object</td></tr>
-            </table>
-        </div>
-
-        <h4>Examples</h4>
-        <div class="examples">
-        <ul>
-            <li>
-                <code>is_solid($geometry)</code> &rarr; <code>true (if, the current geometry is closed)</code>
-            </li>
-        </ul>
-        </div>
-    """
-
-    mesh = Mesh(geometry)
-
-    if mesh.isEmpty():
-        return False
-
-    return mesh.isSolid()
 
 class ThreeToolboxPlugin(object):
 
@@ -143,8 +66,10 @@ class ThreeToolboxPlugin(object):
         if has_pyvista:
             QgsExpression.registerFunction(volume)
             QgsExpression.registerFunction(is_solid)
+            QgsExpression.registerFunction(surface_area)
 
     def unload(self):
         QgsApplication.processingRegistry().removeProvider(self.provider)
         QgsExpression.unregisterFunction('volume')
         QgsExpression.unregisterFunction('is_solid')
+        QgsExpression.unregisterFunction('surface_area')

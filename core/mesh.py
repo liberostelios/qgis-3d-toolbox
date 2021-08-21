@@ -1,7 +1,17 @@
 """A module that defines the Mesh class"""
 
 import pyvista as pv
-from qgis.core import QgsGeometry
+from qgis.core import QgsGeometry, QgsMultiLineString, QgsLineString
+
+def polydata_to_geom(polydata) -> QgsGeometry:
+    """Returns a QgsGeometry from a pyvista mesh"""
+
+    lines = QgsMultiLineString()
+    
+    for i in range(polydata.n_cells):
+        lines.addGeometry(QgsLineString(polydata.cell_points(i)))
+    
+    return lines
 
 class Mesh:
     """A class that describes a volumetric object"""
@@ -33,9 +43,13 @@ class Mesh:
         """Returns the polydata object"""
         return self.__polydata
 
+    def area(self) -> float:
+        """Returns the surface area of the mesh"""
+        return float(self.__polydata.area)
+
     def volume(self) -> float:
         """Returns the volume of the given geometry"""
-        return self.__polydata.volume
+        return float(self.__polydata.volume)
 
     def isEmpty(self) -> bool:
         """Returns True if the geometry is empty"""
@@ -43,4 +57,15 @@ class Mesh:
 
     def isSolid(self) -> bool:
         """Returns True if this mesh is a solid (i.e. a closed volume)"""
-        return self.__polydata.n_open_edges == 0
+        return self.num_of_holes() == 0
+
+    def num_of_holes(self) -> int:
+        """Returns the number of open holes in the volume"""
+        return self.__polydata.n_open_edges
+
+    def getHoles(self) -> QgsMultiLineString:
+        """Returns the open holes of the mesh as QgsMultiLineString"""
+        edges = self.__polydata.extract_feature_edges(feature_edges=False,
+                                                      manifold_edges=False)
+
+        return polydata_to_geom(edges)

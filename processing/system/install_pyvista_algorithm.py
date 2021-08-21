@@ -67,6 +67,14 @@ class InstallPyvistaAlgorithm(QgsProcessingAlgorithm):
     OUTPUT = 'OUTPUT'
     INPUT = 'INPUT'
 
+    def initAlgorithm(self, config):
+        """
+        Here we define the inputs and output of the algorithm, along
+        with some other properties.
+        """
+
+        pass
+
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
