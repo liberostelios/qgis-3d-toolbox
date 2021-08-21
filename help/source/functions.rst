@@ -1,4 +1,5 @@
 Functions
 =========
 
-.. autofunction:: three_toolbox.three_toolbox.volume
+.. automodule:: three_toolbox.functions
+    :members:
