@@ -57,6 +57,33 @@ functions_help = {
             </li>
         </ul>
         </div>
+    """,
+    "surface_area": """
+        Returns the surface area of a multipolygon geometry.
+
+        <h4>Syntax</h4>
+        <div class="syntax">
+            <code>
+                <span class="functionname">surface_area</span>
+                (<span class="argument">geometry</span>)
+            </code>
+        </div>
+
+        <h4>Arguments</h4>
+        <div class="arguments">
+            <table>
+                <tr><td class="argument">geometry</td><td>multipolygon geometry object</td></tr>
+            </table>
+        </div>
+
+        <h4>Examples</h4>
+        <div class="examples">
+        <ul>
+            <li>
+                <code>surface_area($geometry)</code> &rarr; <code>The surface area of the current geometry</code>
+            </li>
+        </ul>
+        </div>
     """
 }
 
@@ -113,7 +140,7 @@ def is_solid(geometry, feature, parent):
 
     return mesh.isSolid()
 
-@qgsfunction('auto', "3D Geometry", register=False)
+@qgsfunction('auto', "3D Geometry", register=False, helpText=functions_help["surface_area"])
 def surface_area(geometry, feature, parent) -> float:
     """Returns the surface area of a multipolygon geometry.
 
@@ -125,7 +152,7 @@ def surface_area(geometry, feature, parent) -> float:
         The current feature (unused)
     parent : any
         The parent feature (unused)
-    
+
     Returns
     -------
     float
