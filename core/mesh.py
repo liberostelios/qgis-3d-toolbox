@@ -7,17 +7,28 @@ def polydata_to_geom(polydata) -> QgsGeometry:
     """Returns a QgsGeometry from a pyvista mesh"""
 
     lines = QgsMultiLineString()
-    
+
     for i in range(polydata.n_cells):
         lines.addGeometry(QgsLineString(polydata.cell_points(i)))
-    
+
     return lines
 
 class Mesh:
     """A class that describes a volumetric object"""
 
-    def __init__(self, geometry: QgsGeometry) -> None:
-        self.__polydata = self.geom_to_polydata(geometry)
+    def __init__(self, geometry: QgsGeometry, tolerance=None) -> None:
+        """Generates the mesh object from a given QgsGeometry.
+
+        Parameters
+        ----------
+        geometry : QgsGeometry
+            The multipolygon geometry
+        tolerance : float, optional
+            The tolerance used to merge vertices together, by default None. If
+            None is used, then only exactly similar vertices will be merged.
+        """
+        mesh = self.geom_to_polydata(geometry)
+        self.__polydata = mesh.clean(tolerance=tolerance)
 
     def geom_to_polydata(self, geometry: QgsGeometry) -> pv.PolyData:
         """Converts a QgsGeometry to PolyData"""
@@ -37,7 +48,7 @@ class Mesh:
 
         mesh = pv.PolyData(points, faces)
 
-        return mesh.clean()
+        return mesh
 
     def polydata(self) -> pv.PolyData:
         """Returns the polydata object"""
