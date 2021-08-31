@@ -56,8 +56,10 @@ class ThreeToolboxProvider(QgsProcessingProvider):
         """
         if self.__with_pyvista:
             from .analysis.compute_volume_algorithm import ComputeVolumeAlgorithm
+            from .geometry.extract_holes_algorithm import ExtractHolesAlgorithm
 
             self.addAlgorithm(ComputeVolumeAlgorithm())
+            self.addAlgorithm(ExtractHolesAlgorithm())
         else:
             self.addAlgorithm(InstallPyvistaAlgorithm())
         # add additional algorithms here
