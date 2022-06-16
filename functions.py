@@ -84,6 +84,33 @@ functions_help = {
             </li>
         </ul>
         </div>
+    """,
+    "slope": """
+        Returns the slope of a polygon geometry.
+
+        <h4>Syntax</h4>
+        <div class="syntax">
+            <code>
+                <span class="functionname">slope</span>
+                (<span class="argument">geometry</span>)
+            </code>
+        </div>
+
+        <h4>Arguments</h4>
+        <div class="arguments">
+            <table>
+                <tr><td class="argument">geometry</td><td>polygon geometry object</td></tr>
+            </table>
+        </div>
+
+        <h4>Examples</h4>
+        <div class="examples">
+        <ul>
+            <li>
+                <code>slope($geometry)</code> &rarr; <code>The slope of the current geometry</code>
+            </li>
+        </ul>
+        </div>
     """
 }
 
@@ -165,3 +192,29 @@ def surface_area(geometry, feature, parent) -> float:
         return 0
 
     return mesh.area()
+
+@qgsfunction('auto', "3D Geometry", register=False, helpText=functions_help["slope"])
+def slope(geometry, feature, parent) -> float:
+    """Returns the surface area of a multipolygon geometry.
+
+    Parameters
+    ----------
+    geometry : QgsGeometry
+        A multipolygon geometry
+    feature : QgsFeature
+        The current feature (unused)
+    parent : any
+        The parent feature (unused)
+
+    Returns
+    -------
+    float
+        The surface area of the geometry
+    """
+
+    mesh = Mesh(geometry)
+
+    if mesh.isEmpty():
+        return 0
+
+    return mesh.slopes()[0]

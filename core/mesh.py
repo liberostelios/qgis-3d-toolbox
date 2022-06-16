@@ -1,17 +1,31 @@
 """A module that defines the Mesh class"""
 
 import pyvista as pv
+import numpy as np
 from qgis.core import QgsGeometry, QgsMultiLineString, QgsLineString
 
 def polydata_to_geom(polydata) -> QgsGeometry:
     """Returns a QgsGeometry from a pyvista mesh"""
-
     lines = QgsMultiLineString()
 
     for i in range(polydata.n_cells):
         lines.addGeometry(QgsLineString(polydata.cell_points(i)))
 
     return lines
+
+def vector_angle(va, vb):
+    """Returns the angle between two vectors (in degrees)"""
+    a = np.array(va)
+    b = np.array(vb)
+
+    inner = np.inner(a, b)
+    norms = np.linalg.norm(a) * np.linalg.norm(b)
+
+    cos = inner / norms
+    rad = np.arccos(np.clip(cos, -1.0, 1.0))
+    deg = np.rad2deg(rad)
+
+    return deg.item()
 
 class Mesh:
     """A class that describes a volumetric object"""
@@ -61,6 +75,13 @@ class Mesh:
     def volume(self) -> float:
         """Returns the volume of the given geometry"""
         return float(self.__polydata.volume)
+
+    def slopes(self) -> list:
+        """Returns the slope of individual surface of the geometry"""
+        zenith = [0, 0, 1]
+        normals = self.__polydata.cell_normals
+
+        return [vector_angle(n.tolist(), zenith) for n in normals]
 
     def isEmpty(self) -> bool:
         """Returns True if the geometry is empty"""
