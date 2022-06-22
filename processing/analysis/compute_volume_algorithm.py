@@ -30,6 +30,7 @@ __copyright__ = '(C) 2021 by 3D geoinformation group'
 
 __revision__ = '$Format:%H$'
 
+from re import M
 from PyQt5.QtCore import QVariant
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (QgsProcessing,
@@ -94,6 +95,10 @@ class ComputeVolumeAlgorithm(QgsProcessingAlgorithm):
         """
         Here is where the processing itself takes place.
         """
+
+        # Disable geometry checking, since these are 3D geometries and QGIS
+        # can count them as invalid.
+        context.setInvalidGeometryCheck(QgsFeatureRequest.GeometryNoCheck)
 
         try:
             import ptvsd
