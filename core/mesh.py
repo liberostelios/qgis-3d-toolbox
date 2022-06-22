@@ -42,7 +42,10 @@ class Mesh:
             None is used, then only exactly similar vertices will be merged.
         """
         mesh = self.geom_to_polydata(geometry)
-        self.__polydata = mesh.clean(tolerance=tolerance)
+        self.__polydata = mesh
+
+        if not self.isEmpty():
+            mesh.clean(tolerance=tolerance)
 
     def geom_to_polydata(self, geometry: QgsGeometry) -> pv.PolyData:
         """Converts a QgsGeometry to PolyData"""
@@ -58,7 +61,7 @@ class Mesh:
             points.extend([[p.x(), p.y(), p.z()] for p in pts])
 
         if len(points) == 0:
-            return None
+            return pv.PolyData()
 
         mesh = pv.PolyData(points, faces)
 
@@ -85,7 +88,7 @@ class Mesh:
 
     def isEmpty(self) -> bool:
         """Returns True if the geometry is empty"""
-        return self.__polydata is None
+        return self.__polydata.n_points == 0 or self.__polydata.n_cells == 0
 
     def isSolid(self) -> bool:
         """Returns True if this mesh is a solid (i.e. a closed volume)"""

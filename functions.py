@@ -215,6 +215,6 @@ def slope(geometry, feature, parent) -> float:
     mesh = Mesh(geometry)
 
     if mesh.isEmpty():
-        return 0
+        return None
 
     return mesh.slopes()[0]
