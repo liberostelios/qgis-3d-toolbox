@@ -87,7 +87,7 @@ class ComputeVolumeAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.OUTPUT,
-                self.tr('Output layer')
+                self.tr('Added volume')
             )
         )
 
