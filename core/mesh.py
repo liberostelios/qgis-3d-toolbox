@@ -45,7 +45,11 @@ class Mesh:
         self.__polydata = mesh
 
         if not self.isEmpty():
-            mesh.clean(tolerance=tolerance)
+            self.clean(tolerance)
+
+    def clean(self, tolerance):
+        """Removes duplicate vertices and cleans the dataset"""
+        self.__polydata = self.__polydata.clean(tolerance=tolerance)
 
     def geom_to_polydata(self, geometry: QgsGeometry) -> pv.PolyData:
         """Converts a QgsGeometry to PolyData"""
