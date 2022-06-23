@@ -209,7 +209,7 @@ def slope(geometry, feature, parent) -> float:
     Returns
     -------
     float
-        The surface area of the geometry
+        The slope a given surface
     """
 
     mesh = Mesh(geometry)
@@ -218,3 +218,31 @@ def slope(geometry, feature, parent) -> float:
         return None
 
     return mesh.slopes()[0]
+
+@qgsfunction('auto', "3D Geometry", register=False, helpText="Plot for debug reasons")
+def plot(geometry, feature, parent) -> float:
+    """Returns the surface area of a multipolygon geometry.
+
+    Parameters
+    ----------
+    geometry : QgsGeometry
+        A multipolygon geometry
+    feature : QgsFeature
+        The current feature (unused)
+    parent : any
+        The parent feature (unused)
+
+    Returns
+    -------
+    float
+        The surface area of the geometry
+    """
+
+    mesh = Mesh(geometry)
+
+    if mesh.isEmpty():
+        return None
+
+    mesh.polydata().plot(show_edges=True)
+
+    return 0

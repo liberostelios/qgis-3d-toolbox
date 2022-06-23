@@ -68,6 +68,7 @@ class ThreeToolboxPlugin(object):
             QgsExpression.registerFunction(is_solid)
             QgsExpression.registerFunction(surface_area)
             QgsExpression.registerFunction(slope)
+            QgsExpression.registerFunction(plot)
 
     def unload(self):
         QgsApplication.processingRegistry().removeProvider(self.provider)
@@ -75,3 +76,4 @@ class ThreeToolboxPlugin(object):
         QgsExpression.unregisterFunction('is_solid')
         QgsExpression.unregisterFunction('surface_area')
         QgsExpression.unregisterFunction('slope')
+        QgsExpression.unregisterFunction('plot')
