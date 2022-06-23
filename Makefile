@@ -75,7 +75,22 @@ PEP8EXCLUDE=pydev,resources.py,conf.py,third_party,ui
 #	* Windows:
 #	  AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins'
 
-QGISDIR=Library/Application Support/QGIS/QGIS3/profiles/default
+ifeq ($(OS),Windows_NT)     # is Windows_NT on XP, 2000, 7, Vista, 10...
+    detected_OS := Windows
+else
+    detected_OS := $(shell sh -c 'uname 2>/dev/null || echo Unknown')
+endif
+
+ifeq ($(detected_OS),Windows)
+    QGISDIR := AppData\Roaming\QGIS\QGIS3\profiles\default
+endif
+ifeq ($(detected_OS),Darwin)
+    QGISDIR := Library/Application Support/QGIS/QGIS3/profiles/default
+endif
+ifeq ($(detected_OS),Linux)
+    QGISDIR := .local/share/QGIS/QGIS3/profiles/default
+endif
+# QGISDIR = .local/share/QGIS/QGIS3/profiles/default
 
 #################################################
 # Normally you would not need to edit below here
@@ -94,7 +109,8 @@ default:
 	@echo A Python script, pb_tool provides platform independent management of
 	@echo your plugins and runs anywhere.
 	@echo You can install pb_tool using: pip install pb_tool
-	@echo See https://g-sherman.github.io/plugin_build_tool/ for info. 
+	@echo See https://g-sherman.github.io/plugin_build_tool/ for info.
+	@echo $(QGISDIR) 
 
 compile: $(COMPILED_RESOURCE_FILES)
 
@@ -126,6 +142,7 @@ deploy: compile doc
 	@echo
 	@echo "------------------------------------------"
 	@echo "Deploying plugin to your .qgis2 directory."
+	@echo $(detected_OS) - $(QGISDIR)
 	@echo "------------------------------------------"
 	# The deploy  target only works on unix like operating system where
 	# the Python plugin directory is located at:
