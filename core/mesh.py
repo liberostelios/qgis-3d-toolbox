@@ -73,28 +73,6 @@ def project_2d(points, normal, origin=None) -> list:
 
     return [[np.dot(p - origin, x_axis), np.dot(p - origin, y_axis)] for p in points]
 
-def triangulate_polygon(points, offset = 0):
-    """Returns the points and triangles for a given CityJSON polygon"""
-
-    normal = surface_normal(points)
-    holes = [0]
-    for ring in face:
-        holes.append(len(ring) + holes[-1])
-    holes = holes[1:]
-
-    points_2d = project_2d(points, normal)
-
-    result = earcut.triangulate_float32(points_2d, holes)
-
-    result += offset
-
-    t_count = len(result.reshape(-1,3))
-    if t_count == 0:
-        return points,  []
-    triangles = np.hstack([[3] + list(t) for t in result.reshape(-1,3)])
-
-    return points, triangles
-
 class Polygon:
     """
     A class that represents a polygon.
@@ -120,40 +98,72 @@ class Polygon:
     def normal(self):
         """Returns the polygon's normal vector"""
         return newells_normals(self.__outerRing)
+    
+    @property
+    def is_triangle(self):
+        """Returns True if the polygon is a triangle"""
+        return len(self.__outerRing) == 4 and len(self.__innerRings) == 0
+
+    def ring_to_2d_segments(self, points, with_inner_point=True):
+        """
+        Projects and returns the points, segments and an inner point (if
+        asked) that correspond to the ring provided.
+        """
+        pts = project_2d(np.array(points), self.normal, self.__outerRing[0])[:-1]
+        segments = [[i, i+1] for i in range(len(pts) - 1)] + [[len(pts) - 1, 0]]
+
+        if with_inner_point:
+            # If a centroid is needed, we'll triangulate and pick the first
+            # triangle's centre
+            data = {
+                'vertices': pts,
+                'segments': segments
+            }
+
+            trl = tr.triangulate(data, 'p')
+            triangle = trl['triangles'][0]
+            inner_point = np.average(np.array(pts)[triangle], axis=0) #-- find its centre of mass
+        else:
+            inner_point = None
+        
+        return pts, segments, inner_point
 
     def triangulate(self, offset=0) -> Tuple[list, list]:
-        """Returns the points and triangles that represent a triangulation of
-        the polygon."""
-        normal = self.normal
+        """
+        Returns the points and triangles that represent a triangulation of
+        the polygon.
+        """
+        if self.is_triangle:
+            return self.__outerRing, [3, offset+0, offset+1, offset+2]
 
-        points = self.__outerRing.copy()
+        points = []
+        points2d = []
+        segments = []
+        holes = []
 
-        # Compute the offsets of the holes
-        # holes = [0]
-        # for ring in self.__innerRings:
-        #     points.extend(ring)
-        #     holes.append(len(ring) + holes[-1])
-        # holes = holes[1:] + [len(points)]
+        p, s, _ = self.ring_to_2d_segments(self.__outerRing, False)
+        points.extend(self.__outerRing[:-1])
+        points2d.extend(p)
+        segments.extend(s)
 
-        points = np.array(points)
+        for ring in self.__innerRings:
+            p, s, ip = self.ring_to_2d_segments(ring)
 
-        points_2d = project_2d(points, normal)[:-1]
+            # Offset the segment indices
+            s = (np.array(s) + len(points)).tolist()
 
-        segments = [[i, i+1] for i in range(len(points_2d) - 1)] + [[len(points_2d) - 1, 0]]
-
-        # result = earcut.triangulate_float32(points_2d, holes)
-
-        # result += offset
-
-        # t_count = len(result.reshape(-1,3))
-        # if t_count == 0:
-        #     return points,  []
-        # triangles = np.hstack([[3] + list(t) for t in result.reshape(-1,3)])
+            points.extend(ring[:-1])
+            points2d.extend(p)
+            segments.extend(s)
+            holes.append(list(ip))
 
         data = {
-            'vertices': points_2d,
+            'vertices': points2d,
             'segments': segments
         }
+
+        if len(holes) > 0:
+            data['holes'] = holes
         T = tr.triangulate(data, 'p')
         result = T["triangles"] + offset
 
@@ -185,7 +195,7 @@ class Mesh:
         """Removes duplicate vertices and cleans the dataset"""
         self.__polydata = self.__polydata.clean(tolerance=tolerance)
 
-    def geom_to_polydata(self, geometry: QgsGeometry, triangulate: Boolean = True) -> pv.PolyData:
+    def geom_to_polydata(self, geometry: QgsGeometry) -> pv.PolyData:
         """Converts a QgsGeometry to PolyData"""
         points = []
         faces = []
@@ -196,7 +206,7 @@ class Mesh:
                 p, t = poly.triangulate(len(points))
             except Exception:
                 continue
-            
+
             points.extend(p)
             faces.extend(t)
 
@@ -204,8 +214,6 @@ class Mesh:
             return pv.PolyData()
 
         mesh = pv.PolyData(points, faces)
-
-        # mesh.plot()
 
         return mesh
 
